@@ -1,0 +1,15 @@
+# copy this file to /etc/datastore/datastore-server.conf
+# and modify to meet your environment
+
+[datastore]
+dbname = datastore
+dbuser = datastore_user
+dbpass = secreto
+dbserver = localhost
+
+ldapserver = ldap://127.0.0.1
+userdn = ou=usuarios,dc=centro,dc=com
+groupdn = ou=grupos,dc=centro,dc=com
+
+debug = on
+

@@ -1,0 +1,14 @@
+# start/stop datastore XML-RPC daemon
+
+description     "launch datastore XML-RPC daemon"
+
+start on filesystem
+stop on runlevel [016]
+
+script
+	if [ -r /etc/datastore/datastore-server.conf ]; then
+		exec su -s /bin/sh -c 'exec "$0" "$@"' datastore -- /usr/sbin/datastore-server -f /etc/datastore/datastore-server.conf
+#		exec /usr/sbin/datastore-server -f /etc/datastore/datastore-server.conf
+	fi
+end script
+

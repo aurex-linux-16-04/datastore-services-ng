@@ -1,0 +1,13 @@
+#!/bin/sh -e
+
+case $1 in
+	purge)
+		deluser --quiet datastore > /dev/null || true
+		rm -rf /var/lib/datastore
+		rm -rf /etc/datastore
+		;;
+esac
+
+#DEBHELPER#
+exit 0
+

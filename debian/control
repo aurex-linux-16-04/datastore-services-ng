@@ -1,0 +1,19 @@
+Source:  datastore-services
+Section: admin
+Priority: optional
+Maintainer: Luis Antonio Garcia Gisbert <luisgg@gmail.com>
+Build-Depends: debhelper (>= 7.0)
+Standards-Version: 3.8.4
+
+Package: datastore-server
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7), stunnel4
+Suggests: mysql-server
+Description: simple daemon to store text strings and small files
+ The server is a multi thread XML-RPC daemon with a very simple API to
+ store and retrieve textual data like configuration settings or passwords and
+ small binary files in a centralized manner.
+ To access data, user credentials are authenticated against a ldap server to
+ allow read/write permissions only to authorized users and groups.
+ The daemon no provides SSL encryption by itself, so it binds only to localhost interface.
+ SSL functionality is done with the help of stunnel4 network wrapper.
