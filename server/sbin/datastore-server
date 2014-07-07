@@ -4,6 +4,7 @@ import ldap
 import SocketServer
 import SimpleXMLRPCServer
 import logging
+import logging.handlers
 import os
 import sys
 import getopt
@@ -45,7 +46,13 @@ VARTYPE_FILE = "F"
 #    port = int(sys.argv[1])
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+handler = logging.handlers.SysLogHandler(address = '/dev/log')
+formatter = logging.Formatter('%(module)s.%(funcName)s: %(message)s')
+handler.setFormatter(formatter)
+log.addHandler(handler)
 
 def usage(param=''):
 	if param:
@@ -80,7 +87,7 @@ class RPCObject(object):
 			glist = []
 		
 		if debug_mode:
-			logging.debug('validate_user(%s): '+log_message, username)
+			log.debug('validate_user(%s): '+log_message, username)
 		# get group list
 		searchScope = ldap.SCOPE_SUBTREE
 		retrieveAttributes = [ 'cn' ] 
@@ -101,7 +108,7 @@ class RPCObject(object):
 			log_message = 'search error'
 
 		if debug_mode:
-			logging.debug('get_groups(%s): '+log_message, username)
+			log.debug('get_groups(%s): '+log_message, username)
 		return glist
 
 	def _test_auth_var(self, username, userpass, namespace, varname, accesslevel):
@@ -137,7 +144,7 @@ class RPCObject(object):
 			log_message = "Error accessing database"
 				
 		if debug_mode:
-			logging.debug('database access: '+log_message)
+			log.debug('database access: '+log_message)
 
 		return auth_user
 
@@ -199,7 +206,7 @@ class RPCObject(object):
 				log_message = "del_value: error deleting value"
 				
 		if debug_mode:
-			logging.debug(log_message)
+			log.debug(log_message)
 				
 			
 		return del_result
@@ -228,7 +235,7 @@ class RPCObject(object):
 				log_message = "error in  get_value"
 
 		if debug_mode:
-			logging.debug(log_message)
+			log.debug(log_message)
 
 		return get_result
 
@@ -260,7 +267,7 @@ class RPCObject(object):
 				log_message = "error reading path"
 
 		if debug_mode:
-			logging.debug('put_file(%s): '+log_message, fname)
+			log.debug('put_file(%s): '+log_message, fname)
 
 		return put_result
 
@@ -290,7 +297,7 @@ class RPCObject(object):
 				log_message = "error reading path"
 
 		if debug_mode:
-			logging.debug('del_file(%s): '+log_message, fname)
+			log.debug('del_file(%s): '+log_message, fname)
 
 		return del_result
 
@@ -322,7 +329,7 @@ class RPCObject(object):
 				log_message = "error reading path"
 
 		if debug_mode:
-			logging.debug('get_file(%s): '+log_message, fname)
+			log.debug('get_file(%s): '+log_message, fname)
 
 		return binary_data
 
