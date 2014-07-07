@@ -7,7 +7,7 @@ Standards-Version: 3.8.4
 
 Package: datastore-server
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7), stunnel4
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7), python-ldap, python-mysqldb
 Suggests: mysql-server
 Description: simple daemon to store text strings and small files
  The server is a multi thread XML-RPC daemon with a very simple API to
@@ -16,4 +16,13 @@ Description: simple daemon to store text strings and small files
  To access data, user credentials are authenticated against a ldap server to
  allow read/write permissions only to authorized users and groups.
  The daemon no provides SSL encryption by itself, so it binds only to localhost interface.
- SSL functionality is done with the help of stunnel4 network wrapper.
+ SSL functionality can be easily done with the help of stunnel4 network wrapper.
+
+Package: ausias-datastore-server
+Architecture: all
+Depends: ${misc:Depends}, datastore-server, stunnel4, mysql-server
+Description: configures datastore-server for CIPFP Ausias March intranet environment
+ The package installs a script to automagically configure datastore-server in the
+ CIPFP AUsias March intranet environment
+
+
