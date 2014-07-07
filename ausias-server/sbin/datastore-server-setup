@@ -1,9 +1,10 @@
 #!/bin/sh
 
 echo "This script installs and configures datastore-server in three steps:"
-echo "   1. datastore-server configuration file"
-echo "   2. stunnel4 configuration for datstore-server"
-echo "   3. MySQL database for datastore-server"
-echo "\npress [ENTER] to continue"
+echo "   1. MySQL database for datastore-server"
+echo "   2. stunnel4 configuration for datastore-server"
+echo "   3. datastore-server configuration file"
+echo ""
+echo "press [ENTER] to continue"
 read a
 
