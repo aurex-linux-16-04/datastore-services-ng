@@ -1,10 +1,53 @@
 #!/bin/sh
 
-echo "This script installs and configures datastore-server in three steps:"
-echo "   1. MySQL database for datastore-server"
-echo "   2. stunnel4 configuration for datastore-server"
-echo "   3. datastore-server configuration file"
-echo ""
-echo "press [ENTER] to continue"
+
+db_configure(){
+	rc=0
+	echo "Please enter My SQL root password"
+	mysql -u root -p < /usr/share/ausias-datastore-server/datastore.mysql || rc=$?
+	return $rc
+}
+
+die() {
+	echo "$1" >&2
+	exit 0
+}
+
+
+cat <<EOF
+This script installs and configures datastore-server in three steps:
+   1. MySQL database for datastore-server
+   2. stunnel4 configuration for datastore-server
+   3. datastore-server configuration file
+ 
+press [ENTER] to continue
+
+EOF
 read a
+
+clear
+cat <<EOF
+step 1: Do you want to configure datastore database?
+====================================================
+WARNING: This is a DESTRUCTIVE operation !!!!!
+EOF
+
+while : ; do
+	echo "Y(yes) / N(no) / Q(quit):"
+	read a
+	case "$a" in
+		Y)
+			db_configure || die "Error configuring database. Exiting"
+			break
+			;;
+		N)
+			break
+			;;
+		Q)
+			die "User has cancelled execution"
+			;;
+	esac
+done
+
+
 
