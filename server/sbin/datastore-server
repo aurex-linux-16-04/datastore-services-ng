@@ -413,7 +413,8 @@ if __name__=="__main__":
 		sys.exit(2)
 		
 	try:
-		dbpass = parser.get('datastore', 'dbpass')
+		b64pass = parser.get('datastore', 'dbpass')
+		dbpass = base64.b64decode(b64pass)
 	except:
 		usage('dbpass')                        
 		sys.exit(2)
