@@ -20,6 +20,8 @@ class AsyncXMLRPCServer(SocketServer.ThreadingMixIn,
 # DA(t)A in hex is 3498
 defport = 3498
 
+binddn = ""
+bindpass = ""
 ldapserver = ""
 userdn = ""
 groupdn = ""
@@ -93,6 +95,9 @@ class RPCObject(object):
 		retrieveAttributes = [ 'cn' ] 
 		searchFilter = "memberuid="+username
 		try:
+			if binddn and bindpass:
+				ld.simple_bind_s(binddn, bindpass)
+
 			ldap_result_id = ld.search(groupdn, searchScope, searchFilter, retrieveAttributes)
 			while 1:
 				result_type, result_data = ld.result(ldap_result_id, 0)
@@ -413,11 +418,21 @@ if __name__=="__main__":
 		sys.exit(2)
 		
 	try:
-		b64pass = parser.get('datastore', 'dbpass')
-		dbpass = base64.b64decode(b64pass)
+		dbpass = parser.get('datastore', 'dbpass')
+		#dbpass = base64.b64decode(b64pass)
 	except:
 		usage('dbpass')                        
 		sys.exit(2)
+
+	try:
+		binddn = parser.get('datastore', 'binddn')
+	except:
+		binddn = ""
+
+	try:
+		bindpass = parser.get('datastore', 'bindpass')
+	except:
+		bindpass = ""
 		
 	server = AsyncXMLRPCServer(('localhost',port))
 	server.register_instance(RPCObject())
