@@ -193,7 +193,8 @@ class RPCObject(object):
 				put_result = True
 			except:
 				log_message = "error in  put_value"
-				
+		return put_result	
+			
 	def del_value(self, username, userpass, namespace, varname):
 		del_result = False
 		log_message = "del_value: not authorized"
