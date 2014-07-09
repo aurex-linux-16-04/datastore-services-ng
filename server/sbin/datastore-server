@@ -223,7 +223,7 @@ class RPCObject(object):
 
 	def get_value(self, username, userpass, namespace, varname):
 		log_message = "get_value: not authorized"
-		get_result = ""
+		get_data = ""
 		if self._test_auth_var(username, userpass, namespace, varname, AUTHMODE_READ):
 			try:
 				# connect
@@ -247,7 +247,7 @@ class RPCObject(object):
 		if debug_mode:
 			log.debug(log_message)
 
-		return get_result
+		return get_data
 
 	def put_file(self, username, userpass, namespace, fname, arg):
 		put_result = False
