@@ -155,7 +155,7 @@ class RPCObject(object):
 
 	def _is_valid_data(self, varvalue, vartype):
 		if ( vartype == VARTYPE_STRING):
-			if ( empty(varvalue) ):
+			if ( varvalue == '' ):
 				return False
 		return True
 	
