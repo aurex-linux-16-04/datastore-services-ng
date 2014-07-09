@@ -193,6 +193,10 @@ class RPCObject(object):
 				put_result = True
 			except:
 				log_message = "error in  put_value"
+
+		if debug_mode:
+			log.debug(log_message)
+
 		return put_result	
 			
 	def del_value(self, username, userpass, namespace, varname):
