@@ -12,6 +12,7 @@ import getopt
 from ConfigParser import SafeConfigParser
 import MySQLdb
 import base64
+import xmlrpclib
 
 # Lets go multi-thread (Threaded mix-in) 
 class AsyncXMLRPCServer(SocketServer.ThreadingMixIn,
