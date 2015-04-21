@@ -1,0 +1,82 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+#import cv
+import sys
+
+
+#import glob, os
+#import numpy
+
+#from ConfigParser import SafeConfigParser
+import xmlrpclib
+import getopt
+
+def die(msg=''):
+	if param:
+		print msg
+
+	msg = 'Usage: '+sys.argv[0]+' -s DATASTORE_SERVER_URI -n DATASTORE_NAMESPACE [-u DATASTORE_USER] [-f DATASTORE_FILENAME] FILENAME'
+	sys.exit(msg)
+
+
+if __name__ == '__main__':
+
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], "hs:n:u:f:", ["help", "server=", "namespace=", "user=", "file="])
+
+	except getopt.GetoptError:
+		die()
+
+	datastore_user = ""
+	datastore_pass= ""
+
+	for opt, arg in opts:
+		if opt in ("-h", "--help"):
+                        die()
+		elif opt in ( "-s", "--server"):
+                        datastore_uri = arg
+                elif opt in ( "-n", "--namespace"):
+			datastore_namespace = arg
+                elif opt in ( "-u", "--user"):
+			datastore_user = arg
+                elif opt in ( "-f", "--file"):
+			datastore_filename = arg
+
+	if not args:
+		die("ERROR, you must supply a FILENAME to upload")
+
+	data_file = args[0]
+
+	if not datastore_namespace:
+		die("ERROR, you must supply a DATASTORE_NAMESPACE")
+
+	if not datastore_uri:
+		die("ERROR, you must supply the DATASTORE_URI")
+
+	if not datastore_user:
+		datastore_user = "ANONYMOUS"
+	else:
+		# ask for a pass
+
+	if not datastore_filename:
+		datastore_filename = data_file
+		# TODO: remove path ....
+
+
+	if not server = xmlrpclib.Server(datastore_uri):
+		die("ERROR accessing to datastore server in "+datastore_uri)
+	try:
+		with open(data_file, "rb") as handle:
+        		binary_data = xmlrpclib.Binary(handle.read())
+		handle.close()
+	except:
+		die("ERROR reading file "+data_file)
+
+	if not server.put_file(datastore_user, datastore_pass, datastore_namespace, datastore_filename, binary_data):
+		die("ERROR uploading file, check credentials and namespace")
+
+	if not BE_QUIET:
+		print "File successfully uploaded. Thanks for using datastore services. :-)"
+
+
