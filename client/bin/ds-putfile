@@ -13,27 +13,30 @@ import xmlrpclib
 import getopt
 
 def die(msg=''):
-	if param:
-		print msg
+	if not msg:
+		msg = 'Usage: '+sys.argv[0]+' [-h] [-q] -s DATASTORE_SERVER_URI -n DATASTORE_NAMESPACE [-u DATASTORE_USER] [-f DATASTORE_FILENAME] FILENAME'
 
-	msg = 'Usage: '+sys.argv[0]+' -s DATASTORE_SERVER_URI -n DATASTORE_NAMESPACE [-u DATASTORE_USER] [-f DATASTORE_FILENAME] FILENAME'
+	#print msg
 	sys.exit(msg)
 
 
 if __name__ == '__main__':
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hs:n:u:f:", ["help", "server=", "namespace=", "user=", "file="])
+		opts, args = getopt.getopt(sys.argv[1:], "hqs:n:u:f:", ["help", "quiet", "server=", "namespace=", "user=", "file="])
 
 	except getopt.GetoptError:
 		die()
 
 	datastore_user = ""
 	datastore_pass= ""
+	BE_QUIET = False
 
 	for opt, arg in opts:
 		if opt in ("-h", "--help"):
                         die()
+		elif opt in ("-q", "--quiet"):
+			BE_QUIET = True
 		elif opt in ( "-s", "--server"):
                         datastore_uri = arg
                 elif opt in ( "-n", "--namespace"):
@@ -58,13 +61,16 @@ if __name__ == '__main__':
 		datastore_user = "ANONYMOUS"
 	else:
 		# ask for a pass
+		datastore_pass = ""
 
 	if not datastore_filename:
 		datastore_filename = data_file
 		# TODO: remove path ....
 
 
-	if not server = xmlrpclib.Server(datastore_uri):
+	try:
+		server = xmlrpclib.Server(datastore_uri)
+	except:
 		die("ERROR accessing to datastore server in "+datastore_uri)
 	try:
 		with open(data_file, "rb") as handle:
@@ -73,10 +79,12 @@ if __name__ == '__main__':
 	except:
 		die("ERROR reading file "+data_file)
 
-	if not server.put_file(datastore_user, datastore_pass, datastore_namespace, datastore_filename, binary_data):
+	if server.put_file(datastore_user, datastore_pass, datastore_namespace, datastore_filename, binary_data) :
+		if not BE_QUIET:
+			print "File successfully uploaded. Thanks for using datastore services. :-)"
+
+	else:
 		die("ERROR uploading file, check credentials and namespace")
 
-	if not BE_QUIET:
-		print "File successfully uploaded. Thanks for using datastore services. :-)"
 
 
