@@ -25,4 +25,11 @@ Description: configures datastore-server for CIPFP Ausias March intranet environ
  The package installs a script to automagically configure datastore-server in the
  CIPFP AUsias March intranet environment
 
+Package: datastore-client
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7)
+Description: command line client for datastore-server
+ The server is a multi thread XML-RPC daemon with a very simple API to
+ This package installs a cli to access basic functionallity of a
+ datastore server
 
