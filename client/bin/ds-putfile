@@ -3,7 +3,8 @@
 
 #import cv
 import sys
-
+import getpass
+import os
 
 #import glob, os
 #import numpy
@@ -30,6 +31,7 @@ if __name__ == '__main__':
 
 	datastore_user = ""
 	datastore_pass= ""
+	datastore_filename = ""
 	BE_QUIET = False
 
 	for opt, arg in opts:
@@ -58,14 +60,16 @@ if __name__ == '__main__':
 		die("ERROR, you must supply the DATASTORE_URI")
 
 	if not datastore_user:
-		datastore_user = "ANONYMOUS"
+		datastore_user = "anonymous"
+		datastore_pass = "anonymous"
 	else:
 		# ask for a pass
-		datastore_pass = ""
+		datastore_pass = getpass.getpass("Password for "+datastore_user+": ")
+		if not datastore_pass :
+			die("ERROR, password is empty")
 
 	if not datastore_filename:
-		datastore_filename = data_file
-		# TODO: remove path ....
+		datastore_filename = os.path.basename(data_file)
 
 
 	try:
@@ -79,6 +83,7 @@ if __name__ == '__main__':
 	except:
 		die("ERROR reading file "+data_file)
 
+	print datastore_user +" "+  datastore_pass+" "+ datastore_namespace+" "+ datastore_filename
 	if server.put_file(datastore_user, datastore_pass, datastore_namespace, datastore_filename, binary_data) :
 		if not BE_QUIET:
 			print "File successfully uploaded. Thanks for using datastore services. :-)"
