@@ -73,6 +73,7 @@ class RPCObject(object):
 			log_message = 'anonymous user is ever welcome ...'
 			valid_user = True
 			glist = [ username ]
+			return glist
 		else:
 			# validate credentials in ldap ...
 			try:
