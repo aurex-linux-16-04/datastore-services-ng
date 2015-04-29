@@ -29,7 +29,14 @@ Package: datastore-client
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7)
 Description: command line client for datastore-server
- The server is a multi thread XML-RPC daemon with a very simple API to
  This package installs a cli to access basic functionallity of a
  datastore server
+
+Package: ausias-datastore-client
+Architecture: all
+Depends: datastore-client
+Description: datastore-client for CIPFP Ausias March intranet
+ This package installs a wrapper around datstore-client with
+ custom configuration for the CIPFP Ausias March intrnet environment
+
 

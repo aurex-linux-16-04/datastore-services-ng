@@ -1,3 +1,9 @@
+datastore-services (0.7) precise; urgency=medium
+
+  * New binary ausias-datastore-client
+
+ -- Luis Antonio Garcia Gisbert <luisgg@gmail.com>  Wed, 29 Apr 2015 18:31:45 +0200
+
 datastore-services (0.6) precise; urgency=low
 
   * Minor fixes
