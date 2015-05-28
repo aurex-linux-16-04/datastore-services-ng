@@ -160,7 +160,14 @@ class RPCObject(object):
 			if ( varvalue == '' ):
 				return False
 		return True
+
 	
+	def test_auth_var(self, username, userpass, namespace, varname, accesslevel):
+		return self._test_auth_var(username, userpass, namespace, varname, accesslevel)
+
+	def test_auth_file(self, username, userpass, namespace, varname, accesslevel):
+		return self._test_auth_file(username, userpass, namespace, varname, accesslevel)
+
 	def put_value(self, username, userpass, namespace, varname, varvalue, vartype=VARTYPE_STRING):
 		put_result = False
 		log_message = "put_value: not authorized"
