@@ -2,7 +2,7 @@ Source:  datastore-services
 Section: admin
 Priority: optional
 Maintainer: Luis Antonio Garcia Gisbert <luisgg@gmail.com>
-Build-Depends: debhelper (>= 7.0)
+Build-Depends: debhelper (>= 7.0), python-all
 Standards-Version: 3.8.4
 
 Package: datastore-server
