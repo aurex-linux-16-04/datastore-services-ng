@@ -1,9 +1,9 @@
 Format-Specification: http://wiki.debian.org/Proposals/CopyrightFormat?action=recall&rev=143
-Upstream-Name: datastore-services
+Upstream-Name: datastore-services-ng
 Upstream-Source: https://github.com/luisgg/
 
 Files: *
-Copyright: Copyright 2014 Luis Antonio Garcia Gisbert <luisgg@gmail.com>
+Copyright: Copyright 2015 Luis Antonio Garcia Gisbert <luisgg@gmail.com>
 License: GPL-3+
  
 License: GPL-3+

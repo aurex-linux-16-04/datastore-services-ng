@@ -1,3 +1,9 @@
+datastore-services-ng (0.9) trusty; urgency=medium
+
+  * New binary python-datastore
+
+ -- Luis Antonio Garcia Gisbert <luisgg@gmail.com>  Thu, 04 Jun 2015 00:14:13 +0200
+
 datastore-services (0.8) trusty; urgency=medium
 
   * add public access to methods test_auth_var and test_auth_file
