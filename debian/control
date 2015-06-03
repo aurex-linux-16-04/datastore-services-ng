@@ -1,9 +1,9 @@
-Source:  datastore-services
+Source:  datastore-services-ng
 Section: admin
 Priority: optional
 Maintainer: Luis Antonio Garcia Gisbert <luisgg@gmail.com>
 Build-Depends: debhelper (>= 7.0), python-all
-Standards-Version: 3.8.4
+Standards-Version: 3.9.5
 
 Package: datastore-server
 Architecture: all
@@ -40,3 +40,9 @@ Description: datastore-client for CIPFP Ausias March intranet
  custom configuration for the CIPFP Ausias March intrnet environment
 
 
+Package: python-datastore
+Architecture: all
+Depends: ${python:Depends}, ${misc:Depends}
+Description: library for the datastore for development
+ The package provides python classes for develop plugins for
+ datastore services
