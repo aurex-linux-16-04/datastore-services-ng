@@ -15,6 +15,7 @@ import importlib
 class AsyncXMLRPCServer(SocketServer.ThreadingMixIn,
                         SimpleXMLRPCServer.SimpleXMLRPCServer): pass
 
+
 # data acces mode (r/w)
 AUTHMODE_NONE = 0
 AUTHMODE_READ = 1
@@ -55,9 +56,9 @@ class datastore_core_server(object):
 		else:
 			# validate credentials in ldap ...
 			try:
-				ld=ldap.initialize(ldapserver)
+				ld=ldap.initialize(self.ldapserver)
 				ld.protocol_version = ldap.VERSION3	
-				dn = "uid="+username+","+userdn
+				dn = "uid="+username+","+self.userdn
 				ld.simple_bind_s(dn,userpass)
 				valid_user = True
 				glist = [ 'anonymous', username ]
@@ -68,17 +69,17 @@ class datastore_core_server(object):
 		else:
 			glist = []
 		
-		if debug_mode:
+		if self.debug_mode:
 			log.debug('validate_user(%s): '+log_message, username)
 		# get group list
 		searchScope = ldap.SCOPE_SUBTREE
 		retrieveAttributes = [ 'cn' ] 
 		searchFilter = "memberuid="+username
 		try:
-			if binddn and bindpass:
-				ld.simple_bind_s(binddn, bindpass)
+			if self.binddn and self.bindpass:
+				ld.simple_bind_s(self.binddn, self.bindpass)
 
-			ldap_result_id = ld.search(groupdn, searchScope, searchFilter, retrieveAttributes)
+			ldap_result_id = ld.search(self.groupdn, searchScope, searchFilter, retrieveAttributes)
 			while 1:
 				result_type, result_data = ld.result(ldap_result_id, 0)
 				if (result_data == []):
@@ -92,7 +93,7 @@ class datastore_core_server(object):
 		except ldap.LDAPError, e:
 			log_message = 'search error'
 
-		if debug_mode:
+		if self.debug_mode:
 			log.debug('get_groups(%s): '+log_message, username)
 		return glist
 
@@ -128,7 +129,7 @@ class datastore_core_server(object):
 		except:
 			log_message = "Error accessing database"
 				
-		if debug_mode:
+		if self.debug_mode:
 			log.debug('database access: '+log_message)
 
 		return auth_user
@@ -181,7 +182,7 @@ class datastore_core_server(object):
 			except:
 				log_message = "error in  put_value"
 
-		if debug_mode:
+		if self.debug_mode:
 			log.debug(log_message)
 
 		return put_result	
@@ -202,7 +203,7 @@ class datastore_core_server(object):
 			except:
 				log_message = "del_value: error deleting value"
 				
-		if debug_mode:
+		if self.debug_mode:
 			log.debug(log_message)
 				
 			
@@ -231,7 +232,7 @@ class datastore_core_server(object):
 			except:
 				log_message = "error in  get_value"
 
-		if debug_mode:
+		if self.debug_mode:
 			log.debug(log_message)
 
 		return get_data
@@ -263,7 +264,7 @@ class datastore_core_server(object):
 			except:
 				log_message = "error reading path"
 
-		if debug_mode:
+		if self.debug_mode:
 			log.debug('put_file(%s): '+log_message, fname)
 
 		return put_result
@@ -293,7 +294,7 @@ class datastore_core_server(object):
 			except:
 				log_message = "error reading path"
 
-		if debug_mode:
+		if self.debug_mode:
 			log.debug('del_file(%s): '+log_message, fname)
 
 		return del_result
@@ -325,7 +326,7 @@ class datastore_core_server(object):
 			except:
 				log_message = "error reading path"
 
-		if debug_mode:
+		if self.debug_mode:
 			log.debug('get_file(%s): '+log_message, fname)
 
 		return binary_data
@@ -341,22 +342,22 @@ class datastore_plugin(datastore_core_server):
 		return super(datastore_plugin,self).test_auth_file(username, userpass, self.__class__.name__, varname, accesslevel)
 
 	def put_value(self, username, userpass, namespace, varname, varvalue, vartype=VARTYPE_STRING):
-		return super(datastore_plugin,self).put_value(self, username, userpass, self.__class__.name__, varname, varvalue, vartype)
+		return super(datastore_plugin,self).put_value(username, userpass, self.__class__.name__, varname, varvalue, vartype)
 	
 	def del_value(self, username, userpass, namespace, varname):
-		return super(datastore_plugin,self).del_value(self, username, userpass, self.__class__.name__, varname)
+		return super(datastore_plugin,self).del_value(username, userpass, self.__class__.name__, varname)
 
 	def get_value(self, username, userpass, namespace, varname):
-		return super(datastore_plugin,self).get_value(self, username, userpass, self.__class__.name__, varname)
+		return super(datastore_plugin,self).get_value(username, userpass, self.__class__.name__, varname)
 
 	def put_file(self, username, userpass, namespace, fname, arg):
-		return super(datastore_plugin,self).put_file(self, username, userpass, self.__class__.name__, fname, arg)
+		return super(datastore_plugin,self).put_file(username, userpass, self.__class__.name__, fname, arg)
 
 	def del_file(self, username, userpass, namespace, fname):
-		return super(datastore_plugin,self).del_file(self, username, userpass, self.__class__.name__, fname)
+		return super(datastore_plugin,self).del_file(username, userpass, self.__class__.name__, fname)
 
 	def get_file(self, username, userpass, namespace, fname):
-		return super(datastore_plugin,self).get_file(self, username, userpass, self.__class__.name__, fname)
+		return super(datastore_plugin,self).get_file(username, userpass, self.__class__.name__, fname)
 
 class datastore_server(datastore_core_server):
 	def __init__(self,plugin_path=""):
