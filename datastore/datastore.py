@@ -8,6 +8,8 @@ import sys
 import MySQLdb
 import base64
 import xmlrpclib
+import inspect
+import importlib
 
 # Lets go multi-thread (Threaded mix-in) 
 class AsyncXMLRPCServer(SocketServer.ThreadingMixIn,
@@ -40,8 +42,8 @@ formatter = logging.Formatter('%(module)s.%(funcName)s: %(message)s')
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
-# Create class Legacy with exposed methods
-class datastore_legacy(object):
+# Create class Server with exposed methods
+class datastore_core_server(object):
 	def _get_groups(self, username, userpass):
 		valid_user = False
 		log_message = 'user validation error'
@@ -330,13 +332,42 @@ class datastore_legacy(object):
 
 
 
-class datastore_plugin(datastore_legacy):
+class datastore_plugin(datastore_core_server):
 
 	def test_auth_var(self, username, userpass, varname, accesslevel):
-		super(datastore_plugin, self).test_auth_var(username, userpass, self.__class__.__name__, varname, accesslevel)
+		return super(datastore_plugin, self).test_auth_var(username, userpass, self.__class__.__name__, varname, accesslevel)
 
 	def test_auth_file(self, username, userpass, namespace, varname, accesslevel):
-		return self._test_auth_file(username, userpass, namespace, varname, accesslevel)
+		return super(datastore_plugin,self).test_auth_file(username, userpass, self.__class__.name__, varname, accesslevel)
 
 	def put_value(self, username, userpass, namespace, varname, varvalue, vartype=VARTYPE_STRING):
+		return super(datastore_plugin,self).put_value(self, username, userpass, self.__class__.name__, varname, varvalue, vartype)
+	
+	def del_value(self, username, userpass, namespace, varname):
+		return super(datastore_plugin,self).del_value(self, username, userpass, self.__class__.name__, varname)
+
+	def get_value(self, username, userpass, namespace, varname):
+		return super(datastore_plugin,self).get_value(self, username, userpass, self.__class__.name__, varname)
+
+	def put_file(self, username, userpass, namespace, fname, arg):
+		return super(datastore_plugin,self).put_file(self, username, userpass, self.__class__.name__, fname, arg)
+
+	def del_file(self, username, userpass, namespace, fname):
+		return super(datastore_plugin,self).del_file(self, username, userpass, self.__class__.name__, fname)
+
+	def get_file(self, username, userpass, namespace, fname):
+		return super(datastore_plugin,self).get_file(self, username, userpass, self.__class__.name__, fname)
+
+class datastore_server(datastore_core_server):
+	def __init__(self,plugin_path):
+
+		if plugin_path not in sys.path:
+			sys.path.append(plugin_path)
+		for file in os.listdir(plugin_path):
+			if file.endswith(".py") and not  file.startswith("_"):
+				cname = os.path.splitext(file)[0]
+				cmodule = importlib.import_module(cname)
+				constructor = getattr(cmodule, cname)
+				setattr( self, cname,constructor() )
+
 

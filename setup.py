@@ -12,7 +12,7 @@ setup(
     url="https://github.com/aurex-linux/datastore-services-ng",
     license="GPL v3+",
     description="library for datastore services",
-    py_modules=["datastore"],
+    packages=["datastore"],
     scripts=[],
 )
 

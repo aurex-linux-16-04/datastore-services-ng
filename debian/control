@@ -39,6 +39,14 @@ Description: datastore-client for CIPFP Ausias March intranet
  This package installs a wrapper around datstore-client with
  custom configuration for the CIPFP Ausias March intrnet environment
 
+Package: python3-datastore
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: library for the datastore for development
+ The package provides python3 classes for develop plugins for
+ datastore services.
+ .
+ This is the Python 3 version of the package
 
 Package: python-datastore
 Architecture: all
@@ -46,3 +54,5 @@ Depends: ${python:Depends}, ${misc:Depends}
 Description: library for the datastore for development
  The package provides python classes for develop plugins for
  datastore services
+ .
+ This is the Python 2 version of the package
