@@ -1,6 +1,7 @@
 datastore-services-ng (0.9) trusty; urgency=medium
 
-  * New binary python-datastore containing main classes
+  * New binary packages python-datastore containing main classes for python2
+    and python3-datastore for python3
 
  -- Luis Antonio Garcia Gisbert <luisgg@gmail.com>  Thu, 04 Jun 2015 00:14:13 +0200
 
