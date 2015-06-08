@@ -7,7 +7,7 @@ Standards-Version: 3.9.5
 
 Package: datastore-server
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7), python-ldap, python-mysqldb
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7), python-ldap, python-mysqldb, python-datastore
 Suggests: mysql-server
 Description: simple daemon to store text strings and small files
  The server is a multi thread XML-RPC daemon with a very simple API to

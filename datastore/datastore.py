@@ -359,15 +359,15 @@ class datastore_plugin(datastore_core_server):
 		return super(datastore_plugin,self).get_file(self, username, userpass, self.__class__.name__, fname)
 
 class datastore_server(datastore_core_server):
-	def __init__(self,plugin_path):
-
-		if plugin_path not in sys.path:
-			sys.path.append(plugin_path)
-		for file in os.listdir(plugin_path):
-			if file.endswith(".py") and not  file.startswith("_"):
-				cname = os.path.splitext(file)[0]
-				cmodule = importlib.import_module(cname)
-				constructor = getattr(cmodule, cname)
-				setattr( self, cname,constructor() )
+	def __init__(self,plugin_path=""):
+		if plugin_path:
+			if plugin_path not in sys.path:
+				sys.path.append(plugin_path)
+			for file in os.listdir(plugin_path):
+				if file.endswith(".py") and not  file.startswith("_"):
+					cname = os.path.splitext(file)[0]
+					cmodule = importlib.import_module(cname)
+					constructor = getattr(cmodule, cname)
+					setattr( self, cname,constructor() )
 
 
