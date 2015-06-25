@@ -12,51 +12,47 @@ import inspect
 import importlib
 
 # Create class datastore_database
-class datastore_database(object):
-	def _init(self,user,passwd,dbname):
-		dbhost="10.10.0.250"
+class datastore_database(self, host, user,passwd,dbname):
+	def _init(self,host,user,passwd,dbname):
+		dbhost=host #como acceder al atributo host de la instancia desde la que ha sido invocado???
 		dbuser=user
 		dbpass=passwd
 		dbname=dbname
-
-	def _initialize(self, user, passwd, db):
-		self._init(self,user,passwd,db)
+		initialized_conn = False #??¿¿
+		initialized_cursor = False #??¿¿
 		
 
-	def connection(self, user, passwd, dbname):
+	def _connection(self):
 		try:
 			#connect
-			self._initialize(self,user,passwd,dbname)
-			db = MySQLdb.connect(dbhost, dbuser, dbpass, dbname)
-			log_message = "Successfully access to database"
+			if not initialized_conn:
+				self.db_conn = MySQLdb.connect(self.dbhost, self.dbbuser, self.dbpass, self.dbname)
+				log_message = "Successfully access to database"
+				self.initialized = True
 		except:
 			log_message = "Error accessing to database"
+			self.initialized = False
 
 		if self.debug_mode:
 			log.debug('database access: '+log_message)
-		return db	
 	
 	def close(self, db_conn):
-		db_conn.close()			
+		#Puede fallar??
+		if self.initilized:
+			self.db_conn.close()			
 	
-	def validation(db_conn, namespace, varname):
-		auth_user = False
+	def init_cursor(self):
+		initialized = False
 		try:
 			#connection exists
-			cur = db_conn.cursor()
-			for g in self._get_groups(dbuser, dbpass)
-			# do SQL query
-			cur.execute("SELECT authvar,authfile FROM auth WHERE username='%s' AND namespace='%s' AND (varname='%s' OR varname='' OR varname IS NULL);" % (g, namespace, varname))
-			# print all the first cell of all the rows
-			for row in cur.fetchall() :
-				if ( row[selectindex] >= accesslevel ):
-					auth_user = True
-					break
-			cur.close()
+			if self.initialized:
+				self.db_cursor= db_conn.cursor()
+				self.db_cursor = True
 
 		except:
 			log_message = "Error placing cursor in database"
-		return auth_user
+			self.db_cursor = False 
+
 	
 	def update(db_conn, varvalue, vartype, namespace, varname):
 		cur = db_conn.cursor()
