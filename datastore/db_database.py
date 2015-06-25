@@ -13,63 +13,84 @@ import importlib
 
 # Create class datastore_database
 class datastore_database(self, host, user,passwd,dbname):
-	def _init(self,host,user,passwd,dbname):
-		dbhost=host #como acceder al atributo host de la instancia desde la que ha sido invocado???
-		dbuser=user
-		dbpass=passwd
-		dbname=dbname
-		initialized_conn = False #??¿¿
-		initialized_cursor = False #??¿¿
-		
+	def __init__(self,host,user,passwd,dbname):
+		self.dbhost=host 
+		self.dbpass=passwd
+		self.dbname=dbname
+		self._initialized_conn = False
+		self._initialized_cursor = False 		
 
-	def _connection(self):
-		try:
-			#connect
-			if not initialized_conn:
+	def init_db(self):
+		#connect
+		if not self._initialized_conn:
+			try:
 				self.db_conn = MySQLdb.connect(self.dbhost, self.dbbuser, self.dbpass, self.dbname)
-				log_message = "Successfully access to database"
-				self.initialized = True
-		except:
-			log_message = "Error accessing to database"
-			self.initialized = False
+				self._initialized_conn = True
+			except:
+				self._initialized_conn = False
+		return self._initialized_conn
 
-		if self.debug_mode:
-			log.debug('database access: '+log_message)
 	
 	def close(self, db_conn):
-		#Puede fallar??
-		if self.initilized:
+		if self._initilized:
 			self.db_conn.close()			
 	
-	def init_cursor(self):
-		initialized = False
-		try:
-			#connection exists
-			if self.initialized:
-				self.db_cursor= db_conn.cursor()
-				self.db_cursor = True
+	def cursor_execute(self, query):
+		if not self._initializated_cursor:
+			if not self.init_db():
+				try:
+				#connection exists
+					self.cursor= self.db_conn.cursor()
+					self._initialized_cursor = True
 
+				except:
+					self._initialized_cursor = False 
+		if not self._initialized_cursor:
+			return False
+
+		try:	
+			self.cursor.execute(query)
+			return True
 		except:
-			log_message = "Error placing cursor in database"
-			self.db_cursor = False 
+			return False
 
 	
-	def update(db_conn, varvalue, vartype, namespace, varname):
-		cur = db_conn.cursor()
-		try:
-			cur.execute("SELECT * FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname))
-			if len(cur.fetchall()) > 0 :
+	def update(varvalue, vartype, namespace, varname):
+		succeed = False
+		if not self.cursor_execute("SELECT * FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
+			return False
+		if len(self.cursor.fetchall()) > 0 :
 			# do update
-				cur.execute("UPDATE varvalues SET varvalue='%s', vartype='%s' WHERE namespace='%s' AND varname='%s';" % (varvalue, vartype, namespace, varname))
-			else:
+			succeed = self.cursor.execute("UPDATE varvalues SET varvalue='%s', vartype='%s' WHERE namespace='%s' AND varname='%s';" % (varvalue, vartype, namespace, varname))
+		else:
 			# do insert
-				cur.execute("INSERT INTO varvalues(namespace, varname, varvalue, vartype) VALUES ('%s', '%s', '%s', '%s');" % (namespace, varname, varvalue, vartype))
+			succeed = self.cursor.execute("INSERT INTO varvalues(namespace, varname, varvalue, vartype) VALUES ('%s', '%s', '%s', '%s');" % (namespace, varname, varvalue, vartype))
 			
-				db_conn.commit()
-		except:
+		if succedd:
+			self.db_conn.commit()
+		else:
 			# Rollback in case there is any error
-			db_conn.rollback()
-			cur.close()
+			self.db_conn.rollback()
+
+
+	
+	def test_auth(self, group_list, namespace, varname, accesslevel, filemode=False):
+		auth_user = False
+		if filemode:
+			selectindex = 1
+		else:
+			selectindex = 0
+
+		#search in database
+		for g in group_list:
+			# do SQL query
+			if self.cursor.execute("SELECT authvar,authfile FROM auth WHERE username='%s' AND namespace='%s' AND (varname='%s' OR varname='' OR varname IS NULL);" % (g, namespace, varname)):
+				# print all the first cell of all the rows
+				for row in self.cursor.fetchall():
+					if ( row[selectindex] >= accesslevel ):
+						auth_user = True
+		return auth_user
+
 
 
 # Create class Server with exposed methods
