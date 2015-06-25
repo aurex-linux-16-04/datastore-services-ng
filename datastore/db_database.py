@@ -13,24 +13,67 @@ import importlib
 
 # Create class datastore_database
 class datastore_database(object):
-	def _init(self,user,passwd,db):
+	def _init(self,user,passwd,dbname):
 		dbhost="10.10.0.250"
 		dbuser=user
 		dbpass=passwd
-		dbname=db
+		dbname=dbname
 
 	def _initialize(self, user, passwd, db):
-		try:
-			db=datastore_database(self)
-			db._init(self,user,passwd,db)
-		except:
-	def connection()
-	def validation()
+		self._init(self,user,passwd,db)
+		
 
-	def _test_auth(self, username, userpass, namespace, varname, accesslevel, filemode=False):
-	# connect
-	db = MySQLdb.connect(host=dbhost, user=dbuser, passwd=dbpass, db=dbname)	
-	cur = db.cursor() 
+	def connection(self, user, passwd, dbname):
+		try:
+			#connect
+			self._initialize(self,user,passwd,dbname)
+			db = MySQLdb.connect(dbhost, dbuser, dbpass, dbname)
+			log_message = "Successfully access to database"
+		except:
+			log_message = "Error accessing to database"
+
+		if self.debug_mode:
+			log.debug('database access: '+log_message)
+		return db	
+	
+	def close(self, db_conn):
+		db_conn.close()			
+	
+	def validation(db_conn, namespace, varname):
+		auth_user = False
+		try:
+			#connection exists
+			cur = db_conn.cursor()
+			for g in self._get_groups(dbuser, dbpass)
+			# do SQL query
+			cur.execute("SELECT authvar,authfile FROM auth WHERE username='%s' AND namespace='%s' AND (varname='%s' OR varname='' OR varname IS NULL);" % (g, namespace, varname))
+			# print all the first cell of all the rows
+			for row in cur.fetchall() :
+				if ( row[selectindex] >= accesslevel ):
+					auth_user = True
+					break
+			cur.close()
+
+		except:
+			log_message = "Error placing cursor in database"
+		return auth_user
+	
+	def update(db_conn, varvalue, vartype, namespace, varname):
+		cur = db_conn.cursor()
+		try:
+			cur.execute("SELECT * FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname))
+			if len(cur.fetchall()) > 0 :
+			# do update
+				cur.execute("UPDATE varvalues SET varvalue='%s', vartype='%s' WHERE namespace='%s' AND varname='%s';" % (varvalue, vartype, namespace, varname))
+			else:
+			# do insert
+				cur.execute("INSERT INTO varvalues(namespace, varname, varvalue, vartype) VALUES ('%s', '%s', '%s', '%s');" % (namespace, varname, varvalue, vartype))
+			
+				db_conn.commit()
+		except:
+			# Rollback in case there is any error
+			db_conn.rollback()
+			cur.close()
 
 
 # Create class Server with exposed methods
