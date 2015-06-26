@@ -54,6 +54,9 @@ class datastore_database(self, host, user,passwd,dbname):
 		except:
 			return False
 
+
+	def delete(self, namespace, varname):
+		
 	
 	def update(varvalue, vartype, namespace, varname):
 		succeed = False
@@ -90,6 +93,7 @@ class datastore_database(self, host, user,passwd,dbname):
 					if ( row[selectindex] >= accesslevel ):
 						auth_user = True
 		return auth_user
+
 
 
 
