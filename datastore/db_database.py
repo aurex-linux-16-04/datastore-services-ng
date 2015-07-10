@@ -37,10 +37,9 @@ class datastore_database(object):
 			self.db_conn.close()			
 	
 	def cursor_execute(self, query):
-		if not self._initializated_cursor:
-			if not self.init_db():
+		if not self._initialized_cursor:
+			if self.init_db():
 				try:
-				#connection exists
 					self.cursor= self.db_conn.cursor()
 					self._initialized_cursor = True
 
