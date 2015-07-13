@@ -56,10 +56,14 @@ class datastore_database(object):
 
 
 	def delete(self, namespace, varname):
-		# kk
-		pass
-	
-	def update(varvalue, vartype, namespace, varname):
+		if self.cursor_execute("DELETE FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
+			self.db_conn.commit()
+			return True
+
+		self.db_conn.rollback()
+		return False
+
+	def update(self, namespace, varname, varvalue, vartype):
 		succeed = False
 		if not self.cursor_execute("SELECT * FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
 			return False
@@ -70,11 +74,13 @@ class datastore_database(object):
 			# do insert
 			succeed = self.cursor.execute("INSERT INTO varvalues(namespace, varname, varvalue, vartype) VALUES ('%s', '%s', '%s', '%s');" % (namespace, varname, varvalue, vartype))
 			
-		if succedd:
+		if succeed:
 			self.db_conn.commit()
+			return True
 		else:
 			# Rollback in case there is any error
 			self.db_conn.rollback()
+			return False
 
 
 	
@@ -94,6 +100,5 @@ class datastore_database(object):
 					if ( row[selectindex] >= accesslevel ):
 						auth_user = True
 		return auth_user
-
 
 
