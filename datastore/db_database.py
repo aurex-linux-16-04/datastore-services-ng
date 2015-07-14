@@ -83,6 +83,28 @@ class datastore_database(object):
 			return False
 
 
+	def read (self, namespace, varname):
+		get_data = ""
+		if self.cursor.execute("SELECT varvalue, vartype FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
+			# get_result = (cur.fetchall())[0][0]
+			# comprobar el numero de filas leidas por si no hay
+			first_row =(self.cursor.fetchall())[0]
+			# prepare data
+			if ( first_row[1] == VARTYPE_PASSWORD ):
+				get_data = base64.b64decode(first_row[0])
+			else:
+				get_data = first_row[0]
+
+			cur.close()
+			db.close()
+				log_message = "successfully get_value"
+			except:
+				log_message = "error in  get_value"
+
+		if self.debug_mode:
+			log.debug(log_message)
+
+		return get_data
 	
 	def test_auth(self, group_list, namespace, varname, accesslevel, filemode=False):
 		auth_user = False
@@ -101,4 +123,32 @@ class datastore_database(object):
 						auth_user = True
 		return auth_user
 
+
+	def read (self, username, userpass, namespace, varname):
+		log_message = "get_value: not authorized"
+		get_data = ""
+		if self._test_auth_var(username, userpass, namespace, varname, AUTHMODE_READ):
+			try:
+				# connect
+				db = MySQLdb.connect(host=dbhost, user=dbuser, passwd=dbpass, db=dbname)
+				cur = db.cursor() 
+				cur.execute("SELECT varvalue, vartype FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname))
+				# get_result = (cur.fetchall())[0][0]
+				first_row =(cur.fetchall())[0]
+				# prepare data
+				if ( first_row[1] == VARTYPE_PASSWORD ):
+					get_data = base64.b64decode(first_row[0])
+				else:
+					get_data = first_row[0]
+
+				cur.close()
+				db.close()
+				log_message = "successfully get_value"
+			except:
+				log_message = "error in  get_value"
+
+		if self.debug_mode:
+			log.debug(log_message)
+
+		return get_data
 
