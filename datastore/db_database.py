@@ -11,6 +11,16 @@ import xmlrpclib
 import inspect
 import importlib
 
+# data types
+# non empty string
+VARTYPE_STRING = "S"
+# base64 stored text
+VARTYPE_PASSWORD = "P"
+# any value, including empty string
+VARTYPE_ANY = "A"
+# file
+VARTYPE_FILE = "F"
+
 # Create class datastore_database
 class datastore_database(object):
 	def __init__(self,host,user,passwd,dbname):
@@ -63,16 +73,16 @@ class datastore_database(object):
 		self.db_conn.rollback()
 		return False
 
-	def update(self, namespace, varname, varvalue, vartype):
+	def update(self, namespace, varname, varvalue, vartype=VARTYPE_STRING):
 		succeed = False
 		if not self.cursor_execute("SELECT * FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
 			return False
 		if len(self.cursor.fetchall()) > 0 :
 			# do update
-			succeed = self.cursor.execute("UPDATE varvalues SET varvalue='%s', vartype='%s' WHERE namespace='%s' AND varname='%s';" % (varvalue, vartype, namespace, varname))
+			succeed = self.cursor_execute("UPDATE varvalues SET varvalue='%s', vartype='%s' WHERE namespace='%s' AND varname='%s';" % (varvalue, vartype, namespace, varname))
 		else:
 			# do insert
-			succeed = self.cursor.execute("INSERT INTO varvalues(namespace, varname, varvalue, vartype) VALUES ('%s', '%s', '%s', '%s');" % (namespace, varname, varvalue, vartype))
+			succeed = self.cursor_execute("INSERT INTO varvalues(namespace, varname, varvalue, vartype) VALUES ('%s', '%s', '%s', '%s');" % (namespace, varname, varvalue, vartype))
 			
 		if succeed:
 			self.db_conn.commit()
@@ -83,27 +93,19 @@ class datastore_database(object):
 			return False
 
 
-	def read (self, namespace, varname):
-		get_data = ""
-		if self.cursor.execute("SELECT varvalue, vartype FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
+	def read(self, namespace, varname):
+		if self.cursor_execute("SELECT varvalue, vartype FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
 			# get_result = (cur.fetchall())[0][0]
 			# comprobar el numero de filas leidas por si no hay
-			first_row =(self.cursor.fetchall())[0]
-			# prepare data
-			if ( first_row[1] == VARTYPE_PASSWORD ):
-				get_data = base64.b64decode(first_row[0])
-			else:
-				get_data = first_row[0]
-
-			cur.close()
-			db.close()
-				log_message = "successfully get_value"
+			try:
+				first_row =(self.cursor.fetchall())[0]
+				# prepare data
+				if ( first_row[1] == VARTYPE_PASSWORD ):
+					get_data = base64.b64decode(first_row[0])
+				else:
+					get_data = first_row[0]
 			except:
-				log_message = "error in  get_value"
-
-		if self.debug_mode:
-			log.debug(log_message)
-
+				get_data = ""
 		return get_data
 	
 	def test_auth(self, group_list, namespace, varname, accesslevel, filemode=False):
@@ -122,33 +124,4 @@ class datastore_database(object):
 					if ( row[selectindex] >= accesslevel ):
 						auth_user = True
 		return auth_user
-
-
-	def read (self, username, userpass, namespace, varname):
-		log_message = "get_value: not authorized"
-		get_data = ""
-		if self._test_auth_var(username, userpass, namespace, varname, AUTHMODE_READ):
-			try:
-				# connect
-				db = MySQLdb.connect(host=dbhost, user=dbuser, passwd=dbpass, db=dbname)
-				cur = db.cursor() 
-				cur.execute("SELECT varvalue, vartype FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname))
-				# get_result = (cur.fetchall())[0][0]
-				first_row =(cur.fetchall())[0]
-				# prepare data
-				if ( first_row[1] == VARTYPE_PASSWORD ):
-					get_data = base64.b64decode(first_row[0])
-				else:
-					get_data = first_row[0]
-
-				cur.close()
-				db.close()
-				log_message = "successfully get_value"
-			except:
-				log_message = "error in  get_value"
-
-		if self.debug_mode:
-			log.debug(log_message)
-
-		return get_data
 
