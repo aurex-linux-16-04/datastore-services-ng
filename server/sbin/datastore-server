@@ -22,7 +22,6 @@ groupdn = ""
 debug_mode = False
 conf_file = ""
 port = 0
-plugin_dir = "/usr/lib/datastore/plugins"
 
 #if len(sys.argv) > 1:
 #    port = int(sys.argv[1])
@@ -133,7 +132,7 @@ if __name__=="__main__":
 	ds_auth = datastore.datastore_auth(ldapserver, userdn, groupdn, binddn, bindpass)
 	ds_database = datastore.datastore_database(dbhost, dbuser, dppass, dbname)
 
-	server.register_instance(datastore.datastore_server(ds_auth, ds_database, plugin_dir, debug_mode))
+	server.register_instance(datastore.datastore_server(ds_auth, ds_database, "", debug_mode))
 	try:
 		print 'Use Control-C to exit'
 		server.serve_forever()

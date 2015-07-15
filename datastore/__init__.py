@@ -11,6 +11,8 @@ import xmlrpclib
 import inspect
 import importlib
 
+DATASTORE_BASEDIR = "/usr/lib/datastore"
+PLUGINS_DIR = DATASTORE_BASEDIR + "/plugins"
 # data acces mode (r/w)
 AUTHMODE_NONE = 0
 AUTHMODE_READ = 1
@@ -432,9 +434,13 @@ class datastore_plugin(datastore_core_server):
 		return super(datastore_plugin,self).get_file(username, userpass, self.__class__.name__, fname)
 
 class datastore_server(datastore_core_server):
-	def __init__(self, ds_auth, ds_database, plugin_path="", debug_mode = False):
+	def __init__(self, ds_auth, ds_database, server_name="", debug_mode = False):
 		super(datastore_core_server,self).__init__(ds_auth, ds_database, debug_mode)
-		if plugin_path:
+		plugins_dirlist = [ PLUGINS_DIR ]
+		if server_name:
+			plugins_dirlist.append(DATASTORE_BASEDIR+"/"+server_name+"-plugins")
+
+		for plugin_path in plugins_dirlist:
 			if plugin_path not in sys.path:
 				sys.path.append(plugin_path)
 			for file in os.listdir(plugin_path):
@@ -442,6 +448,6 @@ class datastore_server(datastore_core_server):
 					cname = os.path.splitext(file)[0]
 					cmodule = importlib.import_module(cname)
 					constructor = getattr(cmodule, cname)
-					setattr( self, cname,constructor(ds_auth, ds_database, debug_mode) )
+					setattr( self, cname, constructor(ds_auth, ds_database, debug_mode) )
 
 
