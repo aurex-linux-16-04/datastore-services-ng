@@ -121,7 +121,7 @@ class datastore_database(object):
 		if not self._initialized_cursor:
 			if self.init_db():
 				try:
-					self.cursor= self.db_conn.cursor()
+					self.cursor = self.db_conn.cursor()
 					self._initialized_cursor = True
 
 				except:
@@ -200,7 +200,7 @@ class datastore_database(object):
 		#search in database
 		for g in group_list:
 			# do SQL query
-			if self.cursor.execute("SELECT authvar,authfile FROM auth WHERE username='%s' AND namespace='%s' AND (varname='%s' OR varname='' OR varname IS NULL);" % (g, namespace, varname)):
+			if self.cursor_execute("SELECT authvar,authfile FROM auth WHERE username='%s' AND namespace='%s' AND (varname='%s' OR varname='' OR varname IS NULL);" % (g, namespace, varname)):
 				# print all the first cell of all the rows
 				for row in self.cursor.fetchall():
 					if ( row[selectindex] >= accesslevel ):
@@ -320,10 +320,8 @@ class datastore_core_server(object):
 		log_message = "get_value: not authorized"
 		get_data = ""
 		if self._test_auth_var(username, userpass, namespace, varname, AUTHMODE_READ):
-			if self.ds_database.read(namespace, varname):
-				log_message = "successfully get_value"
-			else:
-				log_message = "error in  get_value"
+			log_message = "get_value: authorized"
+			get_data = self.ds_database.read(namespace, varname)
 
 		if self.debug_mode:
 			log.debug(log_message)
