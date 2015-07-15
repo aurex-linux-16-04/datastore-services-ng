@@ -128,9 +128,9 @@ if __name__=="__main__":
 	except:
 		bindpass = ""
 		
-	server = AsyncXMLRPCServer(('localhost',port))
+	server = datastore.AsyncXMLRPCServer(('localhost',port))
 	ds_auth = datastore.datastore_auth(ldapserver, userdn, groupdn, binddn, bindpass)
-	ds_database = datastore.datastore_database(dbhost, dbuser, dppass, dbname)
+	ds_database = datastore.datastore_database(dbhost, dbuser, dbpass, dbname)
 
 	server.register_instance(datastore.datastore_server(ds_auth, ds_database, "", debug_mode))
 	try:
