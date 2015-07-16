@@ -7,7 +7,7 @@ Standards-Version: 3.9.5
 
 Package: datastore-server
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7), python-ldap, python-mysqldb, python-datastore
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7), python-datastore
 Suggests: mysql-server
 Description: simple daemon to store text strings and small files
  The server is a multi thread XML-RPC daemon with a very simple API to
@@ -41,7 +41,7 @@ Description: datastore-client for CIPFP Ausias March intranet
 
 Package: python3-datastore
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}
+Depends: ${python3:Depends}, ${misc:Depends}, python-ldap, python-mysqldb
 Description: library for the datastore for development
  The package provides python3 classes for develop plugins for
  datastore services.
@@ -50,7 +50,7 @@ Description: library for the datastore for development
 
 Package: python-datastore
 Architecture: all
-Depends: ${python:Depends}, ${misc:Depends}
+Depends: ${python:Depends}, ${misc:Depends}, python-ldap, python-mysqldb, python-setproctitle
 Description: library for the datastore for development
  The package provides python classes for develop plugins for
  datastore services

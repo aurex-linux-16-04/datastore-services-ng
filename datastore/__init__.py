@@ -45,20 +45,16 @@ class datastore_auth(object):
 		self.groupdn = groupdn
 		self.binddn = binddn
 		self.bindpass = bindpass
-		self._initialized = False
 
 	def initialize(self):
-		if self._initialized:
-			return True
-
 		try:
 			self.ld = ldap.initialize(self.ldapserver)
 			self.ld.protocol_version = ldap.VERSION3
-			self._initialized = True
+			retcode = True
 		except ldap.LDAPError, e:
-			self._initialized = False
+			retcode = False
 
-		return self._initialized
+		return retcode
 
 	def test_credentials(self, username, userpass):
 		if not self.initialize():
@@ -290,7 +286,7 @@ class datastore_core_server(object):
 		if not self._is_valid_data(varvalue, vartype):
 			log_message = "put_value: invalid data"
 		elif self._test_auth_var(username, userpass, namespace, varname, AUTHMODE_WRITE):
-			if self.ds_database.update(self, namespace, varname, varvalue, vartype=VARTYPE_STRING):
+			if self.ds_database.update(namespace, varname, varvalue, vartype):
 				log_message = "successfully put_value"
 				put_result = True
 			else:
@@ -435,9 +431,10 @@ class datastore_plugin(datastore_core_server):
 class datastore_server(datastore_core_server):
 	def __init__(self, ds_auth, ds_database, server_name="", debug_mode = False):
 		super(datastore_server,self).__init__(ds_auth, ds_database, debug_mode)
-		plugins_dirlist = [ PLUGINS_DIR ]
-		if server_name:
-			plugins_dirlist.append(DATASTORE_BASEDIR+"/"+server_name+"-plugins")
+		if not server_name:
+			server_name = "datastore"
+
+		plugins_dirlist = [ PLUGINS_DIR, DATASTORE_BASEDIR+"/"+server_name+"-plugins" ]
 
 		for plugin_path in plugins_dirlist:
 			if os.path.isdir(plugin_path):
