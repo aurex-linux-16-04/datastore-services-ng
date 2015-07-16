@@ -51,7 +51,7 @@ class datastore_auth(object):
 			self.ld = ldap.initialize(self.ldapserver)
 			self.ld.protocol_version = ldap.VERSION3
 			retcode = True
-		except ldap.LDAPError, e:
+		except:
 			retcode = False
 
 		return retcode
@@ -64,7 +64,7 @@ class datastore_auth(object):
 		try:
 			self.ld.simple_bind_s(dn, userpass)
 			return True
-		except ldap.LDAPError, e:
+		except:
 			return False
 		
 	def list_groups(self, username):
