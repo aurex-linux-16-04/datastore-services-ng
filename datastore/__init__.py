@@ -407,26 +407,26 @@ class datastore_plugin(datastore_core_server):
 	def test_auth_var(self, username, userpass, varname, accesslevel):
 		return super(datastore_plugin, self).test_auth_var(username, userpass, self.__class__.__name__, varname, accesslevel)
 
-	def test_auth_file(self, username, userpass, namespace, varname, accesslevel):
-		return super(datastore_plugin,self).test_auth_file(username, userpass, self.__class__.name__, varname, accesslevel)
+	def test_auth_file(self, username, userpass, varname, accesslevel):
+		return super(datastore_plugin,self).test_auth_file(username, userpass, self.__class__.__name__, varname, accesslevel)
 
-	def put_value(self, username, userpass, namespace, varname, varvalue, vartype=VARTYPE_STRING):
-		return super(datastore_plugin,self).put_value(username, userpass, self.__class__.name__, varname, varvalue, vartype)
+	def put_value(self, username, userpass, varname, varvalue, vartype=VARTYPE_STRING):
+		return super(datastore_plugin,self).put_value(username, userpass, self.__class__.__name__, varname, varvalue, vartype)
 	
-	def del_value(self, username, userpass, namespace, varname):
-		return super(datastore_plugin,self).del_value(username, userpass, self.__class__.name__, varname)
+	def del_value(self, username, userpass, varname):
+		return super(datastore_plugin,self).del_value(username, userpass, self.__class__.__name__, varname)
 
-	def get_value(self, username, userpass, namespace, varname):
-		return super(datastore_plugin,self).get_value(username, userpass, self.__class__.name__, varname)
+	def get_value(self, username, userpass, varname):
+		return super(datastore_plugin,self).get_value(username, userpass, self.__class__.__name__, varname)
 
-	def put_file(self, username, userpass, namespace, fname, arg):
-		return super(datastore_plugin,self).put_file(username, userpass, self.__class__.name__, fname, arg)
+	def put_file(self, username, userpass, fname, arg):
+		return super(datastore_plugin,self).put_file(username, userpass, self.__class__.__name__, fname, arg)
 
-	def del_file(self, username, userpass, namespace, fname):
-		return super(datastore_plugin,self).del_file(username, userpass, self.__class__.name__, fname)
+	def del_file(self, username, userpass, fname):
+		return super(datastore_plugin,self).del_file(username, userpass, self.__class__.__name__, fname)
 
-	def get_file(self, username, userpass, namespace, fname):
-		return super(datastore_plugin,self).get_file(username, userpass, self.__class__.name__, fname)
+	def get_file(self, username, userpass, fname):
+		return super(datastore_plugin,self).get_file(username, userpass, self.__class__.__name__, fname)
 
 class datastore_server(datastore_core_server):
 	def __init__(self, ds_auth, ds_database, server_name="", debug_mode = False):
