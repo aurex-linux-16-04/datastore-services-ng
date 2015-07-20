@@ -324,31 +324,35 @@ class datastore_core_server(object):
 
 		return get_data
 
-	def put_file(self, username, userpass, namespace, fname, arg):
+	def _put_file(self, username, userpass, namespace, fname, arg, filepath):
 		put_result = False
 		log_message = "put_file: not authorized"
 		if self._test_auth_file(username, userpass, namespace, fname, AUTHMODE_WRITE):
-			# get path to store files
-			filepath = self.ds_database.get_filepath(namespace)
-			if filepath:
-				# do update
-				try:
-					with open(filepath+"/"+os.path.basename(fname), "wb") as handle:
-						handle.write(arg.data)
-					handle.close()
-					log_message = "file successfully write"
-					put_result = True
+			# do update
+			try:
+				with open(filepath+"/"+os.path.basename(fname), "wb") as handle:
+					handle.write(arg.data)
+				handle.close()
+				log_message = "file successfully write"
+				put_result = True
 
-				except:
-					log_message = "error writing file"
+			except:
+				log_message = "error writing file"
 
-			else:
-				log_message = "error reading path"
 
 		if self.debug_mode:
 			log.debug('put_file(%s): '+log_message, fname)
 
 		return put_result
+
+	def put_file(self, username, userpass, namespace, fname, arg):
+		# get path to store files
+		filepath = self.ds_database.get_filepath(namespace)
+		if filepath:
+			return _put_file(self, username, userpass, namespace, fname, arg, filepath)
+		else:
+			log_message = "error reading path"
+		return False
 
 	def del_file(self, username, userpass, namespace, fname):
 		del_result = False
@@ -421,6 +425,9 @@ class datastore_plugin(datastore_core_server):
 
 	def put_file(self, username, userpass, fname, arg):
 		return super(datastore_plugin,self).put_file(username, userpass, self.__class__.__name__, fname, arg)
+
+	def _put_file(self, username, userpass, fname, arg, filepath):
+		return super(datastore_plugin,self)._put_file(username, userpass, self.__class__.__name__, fname, arg, filepath)
 
 	def del_file(self, username, userpass, fname):
 		return super(datastore_plugin,self).del_file(username, userpass, self.__class__.__name__, fname)
