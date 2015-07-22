@@ -324,10 +324,10 @@ class datastore_core_server(object):
 
 		return get_data
 
-	def _put_file(self, filepath, fname, arg):
+	def _put_file(self, fname, arg):
 		# do update
 		try:
-			with open(filepath+"/"+os.path.basename(fname), "wb") as handle:
+			with open(fname, "wb") as handle:
 				handle.write(arg.data)
 			handle.close()
 
@@ -343,7 +343,7 @@ class datastore_core_server(object):
 			# get path to store files
 			filepath = self.ds_database.get_filepath(namespace)
 			if filepath:
-				if _put_file(filepath, fname, arg):
+				if _put_file(filepath+"/"+os.path.basename(fname), arg):
 				log_message = "file successfully write"
 				put_result = True
 			else:
