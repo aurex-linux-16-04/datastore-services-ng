@@ -7,7 +7,7 @@ Standards-Version: 3.9.5
 
 Package: datastore-server
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7), python-datastore
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7), python-datastore, python-setproctitle
 Suggests: mysql-server
 Description: simple daemon to store text strings and small files
  The server is a multi thread XML-RPC daemon with a very simple API to
@@ -17,6 +17,26 @@ Description: simple daemon to store text strings and small files
  allow read/write permissions only to authorized users and groups.
  The daemon no provides SSL encryption by itself, so it binds only to localhost interface.
  SSL functionality can be easily done with the help of stunnel4 network wrapper.
+ .
+ This is the Python 2 version of the package
+
+Package: datastore3-server
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python (>= 3), python3-datastore, python3-setproctitle
+Conflicts: datastore-server
+Replaces: datastore-server
+Provides: datastore-server
+Suggests: mysql-server
+Description: simple daemon to store text strings and small files
+ The server is a multi thread XML-RPC daemon with a very simple API to
+ store and retrieve textual data like configuration settings or passwords and
+ small binary files in a centralized manner.
+ To access data, user credentials are authenticated against a ldap server to
+ allow read/write permissions only to authorized users and groups.
+ The daemon no provides SSL encryption by itself, so it binds only to localhost interface.
+ SSL functionality can be easily done with the help of stunnel4 network wrapper.
+ .
+ This is the Python 3 version of the package
 
 Package: ausias-datastore-server
 Architecture: all
@@ -24,6 +44,20 @@ Depends: ${misc:Depends}, datastore-server, stunnel4, mysql-server
 Description: configures datastore-server for CIPFP Ausias March intranet environment
  The package installs a script to automagically configure datastore-server in the
  CIPFP AUsias March intranet environment
+ .
+ This is the Python 2 version of the package
+
+Package: ausias-datastore3-server
+Architecture: all
+Depends: ${misc:Depends}, datastore3-server, stunnel4, mysql-server
+Conflicts: ausias-datastore-server
+Replaces: ausias-datastore-server
+Provides: ausias-datastore-server
+Description: configures datastore-server for CIPFP Ausias March intranet environment
+ The package installs a script to automagically configure datastore-server in the
+ CIPFP AUsias March intranet environment
+ .
+ This is the Python 3 version of the package
 
 Package: datastore-client
 Architecture: all
@@ -31,6 +65,20 @@ Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.7)
 Description: command line client for datastore-server
  This package installs a cli to access basic functionallity of a
  datastore server
+ .
+ This is the Python 2 version of the package
+
+Package: datastore3-client
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python (>= 3)
+Conflicts: datastore-client
+Replaces: datastore-client
+Provides: datastore-client
+Description: command line client for datastore-server
+ This package installs a cli to access basic functionallity of a
+ datastore server
+ .
+ This is the Python 3 version of the package
 
 Package: ausias-datastore-client
 Architecture: all
@@ -38,6 +86,29 @@ Depends: datastore-client
 Description: datastore-client for CIPFP Ausias March intranet
  This package installs a wrapper around datstore-client with
  custom configuration for the CIPFP Ausias March intrnet environment
+ .
+ This is the Python 2 version of the package
+
+Package: ausias-datastore3-client
+Architecture: all
+Depends: datastore3-client
+Conflicts: ausias-datastore-client
+Replaces: ausias-datastore-client
+Provides: ausias-datastore-client
+Description: datastore-client for CIPFP Ausias March intranet
+ This package installs a wrapper around datstore-client with
+ custom configuration for the CIPFP Ausias March intrnet environment
+ .
+ This is the Python 3 version of the package
+
+Package: python-datastore
+Architecture: all
+Depends: ${python:Depends}, ${misc:Depends}, python-ldap, python-mysqldb
+Description: library for the datastore for development
+ The package provides python classes for develop plugins for
+ datastore services
+ .
+ This is the Python 2 version of the package
 
 Package: python3-datastore
 Architecture: all
@@ -48,11 +119,3 @@ Description: library for the datastore for development
  .
  This is the Python 3 version of the package
 
-Package: python-datastore
-Architecture: all
-Depends: ${python:Depends}, ${misc:Depends}, python-ldap, python-mysqldb, python-setproctitle
-Description: library for the datastore for development
- The package provides python classes for develop plugins for
- datastore services
- .
- This is the Python 2 version of the package

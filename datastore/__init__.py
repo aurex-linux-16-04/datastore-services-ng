@@ -12,6 +12,9 @@ import inspect
 import importlib
 
 DATASTORE_BASEDIR = "/usr/lib/datastore"
+if sys.version_info.major == 3:
+	DATASTORE_BASEDIR = DATASTORE_BASEDIR+"3"
+
 PLUGINS_DIR = DATASTORE_BASEDIR + "/plugins"
 # data acces mode (r/w)
 AUTHMODE_NONE = 0
