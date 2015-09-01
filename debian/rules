@@ -2,3 +2,26 @@
 
 %:
 	dh $@ --with python2,python3 --buildsystem pybuild
+#!/usr/bin/make -f
+
+override_dh_auto_configure:
+	# expand templates for python2 packages
+	rm -f debian/python2-expanded-files
+	dh_listpackages |grep -v "3" |while read p; do for f in `ls -1 debian/ |grep "^$${p}\..*\.in$$"`; do F=`basename "$$f" ".in"`; FNAME=$${F%.*}; FEXT=$${F##*.}; if [ ! -e debian/$$FNAME.$$FEXT ] ; then cp debian/$$f debian/$$FNAME.$$FEXT; echo "debian/$$FNAME.$$FEXT" >> debian/python2-expanded-files ;fi ;done; done
+
+	# expand templates for python3 packages
+	rm -f debian/python3-expanded-files
+	dh_listpackages |grep "3" |while read p; do p2=`echo $$p |tr -d "3"`; for f in `ls -1 debian/ |grep "^$${p2}\..*\.in$$"`; do F=`basename "$$f" ".in"`; FNAME=$${F%.*}; FEXT=$${F##*.}; if [ ! -e debian/$$p.$$FEXT ] ; then cp debian/$$f debian/$$p.$$FEXT; echo "debian/$$p.$$FEXT" >> debian/python3-expanded-files ; fi; done; done
+	dh_auto_configure
+
+override_dh_clean:
+	# remove templates for python2 packages
+	[ ! -e debian/python2-expanded-files ] || cat debian/python2-expanded-files | while read f; do rm -f $$f; done
+	rm -f debian/python2-expanded-files
+
+	# remove templates for python3 packages
+	[ ! -e debian/python3-expanded-files ] || cat debian/python3-expanded-files | while read f; do rm -f $$f; done
+	rm -f debian/python3-expanded-files
+
+	dh_clean
+
