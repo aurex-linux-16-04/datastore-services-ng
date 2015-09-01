@@ -1,5 +1,11 @@
 datastore-services-ng (1.1) trusty; urgency=medium
 
+  * debian files modified to become templates for python 2 and 3
+
+ -- Luis Antonio Garcia Gisbert <luisgg@gmail.com>  Tue, 01 Sep 2015 12:23:57 +0200
+
+datastore-services-ng (1.1) trusty; urgency=medium
+
   * Added new private method _put_file to write files in an arbitrary
     path
 
