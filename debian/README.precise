@@ -1,0 +1,5 @@
+Notes to build package on Ubuntu 12.04 precise
+==============================================
+* Remove "--buildsystem pybuild" from debian/rules
+* Remove "dh-python" form Build-Depends in debian/control
+* Delete python3 packages from debian/control
