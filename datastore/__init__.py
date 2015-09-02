@@ -346,9 +346,9 @@ class datastore_core_server(object):
 			# get path to store files
 			filepath = self.ds_database.get_filepath(namespace)
 			if filepath:
-				if _put_file(filepath+"/"+os.path.basename(fname), arg):
-				log_message = "file successfully write"
-				put_result = True
+				if self._put_file(filepath+"/"+os.path.basename(fname), arg):
+					log_message = "file successfully write"
+					put_result = True
 			else:
 				log_message = "error reading path"
 		if self.debug_mode:
