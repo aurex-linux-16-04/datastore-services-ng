@@ -1,3 +1,9 @@
+datastore-services-ng (1.2) trusty; urgency=medium
+
+  * Added mysql auto reconnect 
+
+ -- Luis Antonio Garcia Gisbert <luisgg@gmail.com>  Fri, 11 Sep 2015 01:09:46 +0200
+
 datastore-services-ng (1.1) trusty; urgency=medium
 
   * debian files modified to become templates for python 2 and 3

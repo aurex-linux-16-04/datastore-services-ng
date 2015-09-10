@@ -106,6 +106,8 @@ class datastore_database(object):
 		if not self._initialized_conn:
 			try:
 				self.db_conn = MySQLdb.connect(self.dbhost, self.dbuser, self.dbpass, self.dbname)
+				self.db_conn.ping(True)
+				self.db_conn = MySQLdb.connect(self.dbhost, self.dbuser, self.dbpass, self.dbname)
 				self._initialized_conn = True
 			except:
 				self._initialized_conn = False
