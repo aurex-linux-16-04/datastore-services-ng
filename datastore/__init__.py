@@ -103,39 +103,44 @@ class datastore_database(object):
 
 	def init_db(self):
 		#connect
-		if not self._initialized_conn:
+		if self._initialized_conn:
 			try:
-				self.db_conn = MySQLdb.connect(self.dbhost, self.dbuser, self.dbpass, self.dbname)
 				self.db_conn.ping(True)
-				self.db_conn = MySQLdb.connect(self.dbhost, self.dbuser, self.dbpass, self.dbname)
-				self._initialized_conn = True
+				return True
 			except:
 				self._initialized_conn = False
+		
+		self._initialized_cursor = False 		
+		try:
+			self.db_conn = MySQLdb.connect(self.dbhost, self.dbuser, self.dbpass, self.dbname)
+			self._initialized_conn = True
+		except:
+			self._initialized_conn = False
+
 		return self._initialized_conn
 
 	
 	def close(self, db_conn):
-		if self._initilized:
+		if self._initialized_conn:
 			self.db_conn.close()			
 	
 	def cursor_execute(self, query):
-		if not self._initialized_cursor:
-			if self.init_db():
+		if self.init_db():
+			if not self._initialized_cursor:
 				try:
 					self.cursor = self.db_conn.cursor()
 					self._initialized_cursor = True
 
 				except:
-					self._initialized_cursor = False 
-		if not self._initialized_cursor:
-			return False
+					return False 
 
-		try:	
-			self.cursor.execute(query)
-			return True
-		except:
-			return False
+			try:	
+				self.cursor.execute(query)
+				return True
+			except:
+				return False
 
+		return False
 
 	def delete(self, namespace, varname):
 		if self.cursor_execute("DELETE FROM varvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
