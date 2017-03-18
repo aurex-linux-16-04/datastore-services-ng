@@ -85,12 +85,12 @@ class datastore_auth(object):
 			if self.binddn and self.bindpass:
 				self.ld.simple_bind_s(self.binddn, self.bindpass)
 
-                        ldap_result_id = self.ld.search(self.groupdn, searchScope, searchFilter, retrieveAttributes)
-                        while 1:
-       	                        result_type, result_data = self.ld.result(ldap_result_id, 0)
-               	                if (result_data == []):
-                               	        break
-                       	        else:
+			ldap_result_id = self.ld.search(self.groupdn, searchScope, searchFilter, retrieveAttributes)
+			while 1:
+				result_type, result_data = self.ld.result(ldap_result_id, 0)
+				if (result_data == []):
+					break
+				else:
 					if result_type == ldap.RES_SEARCH_ENTRY:
 						glist.append(result_data[0][1]['cn'][0])
 
