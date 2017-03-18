@@ -2,7 +2,6 @@ import logging
 import logging.handlers
 import os
 import sys
-import MySQLdb
 import base64
 import xmlrpclib
 import inspect
@@ -14,11 +13,13 @@ if sys.version_info.major == 3:
 	import ldap3
 	import socketserver
 	from xmlrpc.server import SimpleXMLRPCServer
-
+	import pymysql
+	pymysql.install_as_MySQLdb()
 else:
 	import ldap
 	import SocketServer
 	import SimpleXMLRPCServer
+	import MySQLdb
 
 PLUGINS_DIR = DATASTORE_BASEDIR + "/plugins"
 # data acces mode (r/w)
