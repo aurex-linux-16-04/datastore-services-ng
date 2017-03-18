@@ -1,109 +1,107 @@
--- MySQL dump 10.13  Distrib 5.5.35, for debian-linux-gnu (x86_64)
+-- phpMyAdmin SQL Dump
+-- version 4.5.4.1deb2ubuntu2
+-- http://www.phpmyadmin.net
 --
--- Host: localhost    Database: datastore
--- ------------------------------------------------------
--- Server version	5.5.35-0ubuntu0.12.04.2
+-- Servidor: localhost
+-- Tiempo de generación: 18-03-2017 a las 12:26:19
+-- Versión del servidor: 5.7.17-0ubuntu0.16.04.1
+-- Versión de PHP: 7.0.15-0ubuntu0.16.04.4
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Current Database: `datastore`
+-- Base de datos: `datastore`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `datastore` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */;
-
-USE `datastore`;
+-- --------------------------------------------------------
 
 --
--- Table structure for table `auth`
+-- Estructura de tabla para la tabla `auth`
 --
 
-DROP TABLE IF EXISTS `auth`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `auth` (
   `username` varchar(40) COLLATE utf8_bin NOT NULL,
   `namespace` varchar(40) COLLATE utf8_bin NOT NULL,
   `varname` varchar(40) COLLATE utf8_bin NOT NULL,
   `authvar` int(1) NOT NULL,
   `authfile` int(1) NOT NULL,
-  PRIMARY KEY (`username`,`namespace`,`varname`)
+  `authdb` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `auth`
+-- Estructura de tabla para la tabla `dbvalues`
 --
 
-LOCK TABLES `auth` WRITE;
-/*!40000 ALTER TABLE `auth` DISABLE KEYS */;
-/*!40000 ALTER TABLE `auth` ENABLE KEYS */;
-UNLOCK TABLES;
+CREATE TABLE `dbvalues` (
+  `namespace` varchar(40) COLLATE utf8_bin NOT NULL,
+  `varname` varchar(40) COLLATE utf8_bin NOT NULL,
+  `dbhost` varchar(250) COLLATE utf8_bin NOT NULL,
+  `dbname` varchar(250) COLLATE utf8_bin NOT NULL,
+  `dbuser` varchar(250) COLLATE utf8_bin NOT NULL,
+  `dbpass` varchar(250) COLLATE utf8_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `filepaths`
+-- Estructura de tabla para la tabla `filepaths`
 --
 
-DROP TABLE IF EXISTS `filepaths`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `filepaths` (
   `namespace` varchar(40) COLLATE utf8_bin NOT NULL,
-  `filepath` varchar(250) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`namespace`)
+  `filepath` varchar(250) COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `filepaths`
+-- Estructura de tabla para la tabla `varvalues`
 --
 
-LOCK TABLES `filepaths` WRITE;
-/*!40000 ALTER TABLE `filepaths` DISABLE KEYS */;
-/*!40000 ALTER TABLE `filepaths` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `varvalues`
---
-
-DROP TABLE IF EXISTS `varvalues`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `varvalues` (
   `namespace` varchar(40) COLLATE utf8_bin NOT NULL,
   `varname` varchar(40) COLLATE utf8_bin NOT NULL,
   `vartype` varchar(1) COLLATE utf8_bin NOT NULL,
-  `varvalue` varchar(250) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`namespace`,`varname`)
+  `varvalue` varchar(250) COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `varvalues`
+-- Índices para tablas volcadas
 --
 
-LOCK TABLES `varvalues` WRITE;
-/*!40000 ALTER TABLE `varvalues` DISABLE KEYS */;
-/*!40000 ALTER TABLE `varvalues` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+--
+-- Indices de la tabla `auth`
+--
+ALTER TABLE `auth`
+  ADD PRIMARY KEY (`username`,`namespace`,`varname`);
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--
+-- Indices de la tabla `dbvalues`
+--
+ALTER TABLE `dbvalues`
+  ADD PRIMARY KEY (`namespace`,`varname`);
+
+--
+-- Indices de la tabla `filepaths`
+--
+ALTER TABLE `filepaths`
+  ADD PRIMARY KEY (`namespace`);
+
+--
+-- Indices de la tabla `varvalues`
+--
+ALTER TABLE `varvalues`
+  ADD PRIMARY KEY (`namespace`,`varname`);
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2014-07-06 19:49:51
