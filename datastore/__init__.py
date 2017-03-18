@@ -1,4 +1,3 @@
-import SimpleXMLRPCServer
 import logging
 import logging.handlers
 import os
@@ -14,9 +13,12 @@ if sys.version_info.major == 3:
 	DATASTORE_BASEDIR = DATASTORE_BASEDIR+"3"
 	import ldap3
 	import socketserver
+	from xmlrpc.server import SimpleXMLRPCServer
+
 else:
 	import ldap
 	import SocketServer
+	import SimpleXMLRPCServer
 
 PLUGINS_DIR = DATASTORE_BASEDIR + "/plugins"
 # data acces mode (r/w)
