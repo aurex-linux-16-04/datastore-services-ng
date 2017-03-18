@@ -112,7 +112,7 @@ Description: library for the datastore for development
 
 Package: python3-datastore
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}, python-ldap, python-mysqldb
+Depends: ${python3:Depends}, ${misc:Depends}, python3-ldap3, python-mysqldb
 Description: library for the datastore for development
  The package provides python3 classes for develop plugins for
  datastore services.

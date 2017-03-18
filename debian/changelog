@@ -1,3 +1,9 @@
+datastore-services-ng (1.5) xenial; urgency=medium
+
+  * Added support for dbcredentials data
+
+ -- Luis Antonio Garcia Gisbert <luisgg@gmail.com>  Sat, 18 Mar 2017 01:22:20 +0100
+
 datastore-services-ng (1.4) trusty; urgency=medium
 
   * Bypass SSL certificate verification in python >= 2.7.9

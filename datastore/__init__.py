@@ -31,6 +31,12 @@ VARTYPE_ANY = "A"
 # file
 VARTYPE_FILE = "F"
 
+#Datastore data types
+DSTYPE_VAR = 0
+DSTYPE_FILE = 1
+DSTYPE_DB =2
+
+
 # Set up logging
 #logging.basicConfig(level=logging.DEBUG)
 
@@ -188,6 +194,36 @@ class datastore_database(object):
 				get_data = ""
 		return get_data
 
+	def dbread(self, namespace, varname):
+		if self.cursor_execute("SELECT dbhost,dbname, dbuser,dbpass FROM dbvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
+			# get_result = (cur.fetchall())[0][0]
+			# comprobar el numero de filas leidas por si no hay
+			try:
+				first_row =(self.cursor.fetchall())[0]
+				get_data = [first_row[0:2], base64.b64decode(first_row[3])]
+			except:
+				get_data = []
+		return get_data
+
+	def dbupdate(self, namespace, varname, vardata):
+		succeed = False
+		if not self.cursor_execute("SELECT * FROM dbvalues WHERE namespace='%s' AND varname='%s';" % (namespace, varname)):
+			return False
+		if len(self.cursor.fetchall()) > 0 :
+			# do update
+			succeed = self.cursor_execute("UPDATE dbvalues SET dbhost='%s', dbname='%s', dbuser='%s', dbpass='%s' WHERE namespace='%s' AND varname='%s';" % (vardata[0], vardata[1], vardata[2], base64.b64encode(vardata[3])))
+		else:
+			# do insert
+			succeed = self.cursor_execute("INSERT INTO dbvalues(namespace, varname, dbhost, dbname, dbuser,dbpass) VALUES ('%s', '%s', '%s', '%s', '%s', '%s');" % (namespace, varname, vardata[0], vardata[1], vardata[2], base64.b64encode(vardata[3])))
+			
+		if succeed:
+			self.db_conn.commit()
+			return True
+		else:
+			# Rollback in case there is any error
+			self.db_conn.rollback()
+			return False
+
 
 	def get_filepath(self, namespace):
 		if self.cursor_execute("SELECT filepath FROM filepaths WHERE namespace='%s';" % (namespace)):
@@ -196,17 +232,13 @@ class datastore_database(object):
 			filepath = ""
 		return filepath
 	
-	def test_auth(self, group_list, namespace, varname, accesslevel, filemode=False):
+	def test_auth(self, group_list, namespace, varname, accesslevel, dstype = DSTYPE_VAR):
 		auth_user = False
-		if filemode:
-			selectindex = 1
-		else:
-			selectindex = 0
-
+		selectindex = dstype
 		#search in database
 		for g in group_list:
 			# do SQL query
-			if self.cursor_execute("SELECT authvar,authfile FROM auth WHERE username='%s' AND namespace='%s' AND (varname='%s' OR varname='' OR varname IS NULL);" % (g, namespace, varname)):
+			if self.cursor_execute("SELECT authvar,authfile,authdb FROM auth WHERE username='%s' AND namespace='%s' AND (varname='%s' OR varname='' OR varname IS NULL);" % (g, namespace, varname)):
 				# print all the first cell of all the rows
 				for row in self.cursor.fetchall():
 					if ( row[selectindex] >= accesslevel ):
@@ -260,13 +292,16 @@ class datastore_core_server(object):
 		return glist
 
 	def _test_auth_var(self, username, userpass, namespace, varname, accesslevel):
-		return self._test_auth(username, userpass, namespace, varname, accesslevel, False)
+		return self._test_auth(username, userpass, namespace, varname, accesslevel, DSTYPE_VAR)
 
 	def _test_auth_file(self, username, userpass, namespace, varname, accesslevel):
-		return self._test_auth(username, userpass, namespace, varname, accesslevel, True)
+		return self._test_auth(username, userpass, namespace, varname, accesslevel, DSTYPE_FILE)
 
-	def _test_auth(self, username, userpass, namespace, varname, accesslevel, filemode=False):
-		auth_user = self.ds_database.test_auth(self._get_groups(username,userpass), namespace, varname, accesslevel, filemode)
+	def _test_auth_db(self, username, userpass, namespace, varname, accesslevel):
+		return self._test_auth(username, userpass, namespace, varname, accesslevel, DSTYPE_DB)
+
+	def _test_auth(self, username, userpass, namespace, varname, accesslevel, dstype=DSTYPE_VAR):
+		auth_user = self.ds_database.test_auth(self._get_groups(username,userpass), namespace, varname, accesslevel, dstype)
 		if auth_user:
 			log_message = 'Access granted for user (%s)'
 		else:
@@ -290,6 +325,9 @@ class datastore_core_server(object):
 	def test_auth_file(self, username, userpass, namespace, varname, accesslevel):
 		return self._test_auth_file(username, userpass, namespace, varname, accesslevel)
 
+	def test_auth_db(self, username, userpass, namespace, varname, accesslevel):
+		return self._test_auth_db(username, userpass, namespace, varname, accesslevel)
+
 	def put_value(self, username, userpass, namespace, varname, varvalue, vartype=VARTYPE_STRING):
 		put_result = False
 		log_message = "put_value: not authorized"
@@ -301,6 +339,21 @@ class datastore_core_server(object):
 				put_result = True
 			else:
 				log_message = "error in  put_value"
+
+		if self.debug_mode:
+			log.debug(log_message)
+
+		return put_result	
+			
+	def put_dbcredentials(self, username, userpass, namespace, varname, vardata):
+		put_result = False
+		log_message = "put_dbcredentials: not authorized"
+		if self._test_auth_db(username, userpass, namespace, varname, AUTHMODE_WRITE):
+			if self.ds_database.dbupdate(namespace, varname, vardata):
+				log_message = "successfully put_dbcredentials"
+				put_result = True
+			else:
+				log_message = "error in  put_dbcredentials"
 
 		if self.debug_mode:
 			log.debug(log_message)
@@ -328,6 +381,18 @@ class datastore_core_server(object):
 		if self._test_auth_var(username, userpass, namespace, varname, AUTHMODE_READ):
 			log_message = "get_value: authorized"
 			get_data = self.ds_database.read(namespace, varname)
+
+		if self.debug_mode:
+			log.debug(log_message)
+
+		return get_data
+
+	def get_dbcredentials(self, username, userpass, namespace, varname):
+		log_message = "get_dbcredentials: not authorized"
+		get_data = ""
+		if self._test_auth_db(username, userpass, namespace, varname, AUTHMODE_READ):
+			log_message = "get_dbcredentials: authorized"
+			get_data = self.ds_database.dbread(namespace, varname)
 
 		if self.debug_mode:
 			log.debug(log_message)
@@ -423,6 +488,9 @@ class datastore_plugin(datastore_core_server):
 	def test_auth_file(self, username, userpass, varname, accesslevel):
 		return super(datastore_plugin,self).test_auth_file(username, userpass, self.__class__.__name__, varname, accesslevel)
 
+	def test_auth_db(self, username, userpass, varname, accesslevel):
+		return super(datastore_plugin,self).test_auth_db(username, userpass, self.__class__.__name__, varname, accesslevel)
+
 	def put_value(self, username, userpass, varname, varvalue, vartype=VARTYPE_STRING):
 		return super(datastore_plugin,self).put_value(username, userpass, self.__class__.__name__, varname, varvalue, vartype)
 	
@@ -440,6 +508,12 @@ class datastore_plugin(datastore_core_server):
 
 	def get_file(self, username, userpass, fname):
 		return super(datastore_plugin,self).get_file(username, userpass, self.__class__.__name__, fname)
+
+	def put_dbcredentials(self, username, userpass, varname, vardata):
+		return super(datastore_plugin,self).put_dbcredentials(username, userpass, self.__class__.__name__, varname, vardata)
+
+	def get_dbcredentials(self, username, userpass, varname):
+		return super(datastore_plugin,self).get_dbcredentials(username, userpass, self.__class__.__name__, varname)
 
 class datastore_server(datastore_core_server):
 	def __init__(self, ds_auth, ds_database, server_name="", debug_mode = False):
