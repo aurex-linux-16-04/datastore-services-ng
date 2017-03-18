@@ -12,8 +12,8 @@ if sys.version_info.major == 3:
 	import ldap3 as ldap
 	import socketserver
 	from xmlrpc.server import SimpleXMLRPCServer
-	import pymysql
-	pymysql.install_as_MySQLdb()
+	import PyMySQL as MySQLdb
+#	pymysql.install_as_MySQLdb()
 	import xmlrpc.client as xmlrpclib
 
 else:
