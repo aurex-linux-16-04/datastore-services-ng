@@ -19,7 +19,7 @@ if sys.version_info.major == 3:
 else:
 	import ldap
 	import SocketServer
-	import SimpleXMLRPCServer
+	from SimpleXMLRPCServer import SimpleXMLRPCServer
 	import MySQLdb
 	import xmlrpclib
 
@@ -257,7 +257,7 @@ class datastore_database(object):
 # Lets go multi-thread (Threaded mix-in) 
 
 class AsyncXMLRPCServer(SocketServer.ThreadingMixIn,
-                        SimpleXMLRPCServer.SimpleXMLRPCServer): pass
+                        SimpleXMLRPCServer): pass
 
 # Create class Server with exposed methods
 class datastore_core_server(object):
