@@ -1,4 +1,3 @@
-import ldap
 import SocketServer
 import SimpleXMLRPCServer
 import logging
@@ -14,6 +13,9 @@ import importlib
 DATASTORE_BASEDIR = "/usr/lib/datastore"
 if sys.version_info.major == 3:
 	DATASTORE_BASEDIR = DATASTORE_BASEDIR+"3"
+	import ldap3
+else:
+	import ldap
 
 PLUGINS_DIR = DATASTORE_BASEDIR + "/plugins"
 # data acces mode (r/w)
