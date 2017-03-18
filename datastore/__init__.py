@@ -10,7 +10,7 @@ DATASTORE_BASEDIR = "/usr/lib/datastore"
 if sys.version_info.major == 3:
 	DATASTORE_BASEDIR = DATASTORE_BASEDIR+"3"
 	import ldap3 as ldap
-	import socketserver
+	import socketserver as SocketServer
 	from xmlrpc.server import SimpleXMLRPCServer
 	import pymysql
 	pymysql.install_as_MySQLdb()
